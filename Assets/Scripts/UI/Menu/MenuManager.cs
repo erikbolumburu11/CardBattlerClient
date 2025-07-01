@@ -4,35 +4,59 @@ using UnityEngine;
 public class MenuManager : MonoBehaviour
 {
     [SerializeField] GameObject initialMenu;
+    [SerializeField] GameObject backButton;
+
+    public GameObject mainMenu;
+    public GameObject loginScreen;
+
     GameObject currentMenu;
-    LinkedList<GameObject> menuHistory;
+    Stack<GameObject> menuHistory;
+
+    public static MenuManager instance;
+
+    void Awake()
+    {
+        if(instance != null){
+            Destroy(gameObject);
+            return;
+        }
+        else {
+            instance = this;
+        }
+    }
 
     void Start()
     {
-        initialMenu.SetActive(true);
-        
+        currentMenu = initialMenu;
         menuHistory = new();
-        menuHistory.AddLast(initialMenu);
+        OpenMenu(initialMenu);
+    }
+
+    public void ClearHistory(){
+        menuHistory.Clear();
     }
 
     public void OpenMenu(GameObject newMenu)
     {
-        menuHistory.AddLast(currentMenu);
+        menuHistory.Push(currentMenu);
 
         currentMenu.SetActive(false);
         newMenu.SetActive(true);
 
         currentMenu = newMenu;
+
+        UpdateBackVisibilty();
     }
 
     public void Back()  
     {
-        menuHistory.RemoveLast();
-        GameObject newMenu = menuHistory.Last.Value;
+        if(menuHistory.Count <= 1) return;
+        menuHistory.Pop();
+        OpenMenu(menuHistory.Peek());
+    }
 
-        currentMenu.SetActive(false);
-        newMenu.SetActive(true);
-
-        currentMenu = newMenu;
+    void UpdateBackVisibilty(){
+        if(menuHistory.Count == 1) backButton.SetActive(false);
+        else backButton.SetActive(true);
     }
 }

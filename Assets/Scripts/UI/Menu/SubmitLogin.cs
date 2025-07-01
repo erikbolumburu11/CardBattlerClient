@@ -32,10 +32,7 @@ public class SubmitLogin : MonoBehaviour
             new LoginRequest(usernameField.text, passwordField.text),
             false,
             (res) => {
-                PlayerPrefs.SetString("auth_token", res.token);
-                StartCoroutine(AuthenticationManager.GetUser((user) => {
-                    AuthenticationManager.instance.user = user;
-                }));
+                AuthenticationManager.Login(res.token);
             },
             (err) => {
                 if(string.IsNullOrWhiteSpace(err)){

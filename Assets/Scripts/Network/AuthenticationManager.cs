@@ -7,15 +7,27 @@ public class AuthenticationManager : MonoBehaviour
     public static AuthenticationManager instance;
     public User user;
 
+    public static event Action OnPlayerLoggedIn;
+
     void Awake()
     {
         if(instance != null) {
             Destroy(gameObject);
+            return;
         }
         else {
             instance = this;
             DontDestroyOnLoad(gameObject);
         }
+    }
+
+    void Start()
+    {
+        StartCoroutine(GetLoginStatus((loggedIn) => {
+            if(loggedIn) {
+                Login(PlayerPrefs.GetString("auth_token"));
+            }
+        }));
     }
 
     public static IEnumerator GetLoginStatus(Action<bool> onComplete){
@@ -47,6 +59,16 @@ public class AuthenticationManager : MonoBehaviour
                 Debug.LogError("Failed to get user data: " + err);
             }
         );
+    }
+
+    public static void Login(string token){
+        PlayerPrefs.SetString("auth_token", token);
+        CoroutineRunner.instance.Run(GetUser((user) => {
+            instance.user = user;
+            OnPlayerLoggedIn?.Invoke();
+            MenuManager.instance.ClearHistory();
+            MenuManager.instance.OpenMenu(MenuManager.instance.mainMenu);
+        }));
     }
 }
 

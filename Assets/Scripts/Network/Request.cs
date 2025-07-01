@@ -3,17 +3,18 @@ using System.Collections;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
+using Newtonsoft.Json;
 
 public static class Request
 {
     public static IEnumerator Send<TResponse>(string endpoint, string method, object body, bool authenticated, Action<TResponse> onSuccess, Action<string> onError)
     {
-        string json = body != null ? JsonUtility.ToJson(body) : null;
+        string json = body != null ? JsonConvert.SerializeObject(body) : null;
 
         yield return SendRequest(endpoint, method, json, authenticated, (req) => {
             if (req.result == UnityWebRequest.Result.Success)
             {
-                TResponse result = JsonUtility.FromJson<TResponse>(req.downloadHandler.text);
+                TResponse result = JsonConvert.DeserializeObject<TResponse>(req.downloadHandler.text);
                 onSuccess(result);
             }
             else

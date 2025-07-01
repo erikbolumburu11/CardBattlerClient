@@ -15,9 +15,10 @@ public class ConnectionManager : MonoBehaviour
 
     public static ConnectionManager instance;
 
-    void Start(){
+    void Awake(){
         if(instance != null) {
             Destroy(gameObject);
+            return;
         }
 
         instance = this;
