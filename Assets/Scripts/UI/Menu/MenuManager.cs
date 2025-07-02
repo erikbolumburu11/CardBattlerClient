@@ -29,7 +29,7 @@ public class MenuManager : MonoBehaviour
     {
         currentMenu = initialMenu;
         menuHistory = new();
-        OpenMenu(initialMenu);
+        OpenMenu(initialMenu, false);
     }
 
     public void ClearHistory(){
@@ -38,7 +38,12 @@ public class MenuManager : MonoBehaviour
 
     public void OpenMenu(GameObject newMenu)
     {
-        menuHistory.Push(currentMenu);
+        OpenMenu(newMenu, true);
+    }
+
+    public void OpenMenu(GameObject newMenu, bool addToHistory = true)
+    {
+        if(addToHistory) menuHistory.Push(currentMenu);
 
         currentMenu.SetActive(false);
         newMenu.SetActive(true);
@@ -51,8 +56,7 @@ public class MenuManager : MonoBehaviour
     public void Back()  
     {
         if(menuHistory.Count <= 1) return;
-        menuHistory.Pop();
-        OpenMenu(menuHistory.Peek());
+        OpenMenu(menuHistory.Pop(), false);
     }
 
     void UpdateBackVisibilty(){
