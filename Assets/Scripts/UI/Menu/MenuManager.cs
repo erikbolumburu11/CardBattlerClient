@@ -9,6 +9,8 @@ public class MenuManager : MonoBehaviour
     public GameObject mainMenu;
     public GameObject loginScreen;
 
+    public Canvas canvas;
+
     GameObject currentMenu;
     Stack<GameObject> menuHistory;
 
@@ -23,6 +25,8 @@ public class MenuManager : MonoBehaviour
         else {
             instance = this;
         }
+
+        canvas = GetComponent<Canvas>();
     }
 
     void Start()

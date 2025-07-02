@@ -12,8 +12,8 @@ public class DeckUIManager : MonoBehaviour
 
     [SerializeField] GameObject cardPrefab;
 
-    void OnEnable() => DeckManager.OnDecksGot += UpdateUI;
-    void OnDisable() => DeckManager.OnDecksGot -= UpdateUI;
+    void OnEnable() => DeckManager.OnDecksUpdated += UpdateUI;
+    void OnDisable() => DeckManager.OnDecksUpdated -= UpdateUI;
 
     Deck selectedDeck;
 
@@ -64,5 +64,12 @@ public class DeckUIManager : MonoBehaviour
             Destroy(instantiatedDeckCards[i]);
         }
         instantiatedDeckCards.Clear();
+    }
+
+    public void CreateDeckButton(){
+        TextInputPopup.SpawnPopup(
+            "Deck Name",
+            (deckName) => StartCoroutine(DeckManager.instance.CreateDeck(deckName))
+        );
     }
 }

@@ -9,7 +9,7 @@ public class DeckManager : MonoBehaviour
 
     public List<Deck> decks;
 
-    public static event Action OnDecksGot;
+    public static event Action OnDecksUpdated;
 
     void Awake()
     {
@@ -38,11 +38,27 @@ public class DeckManager : MonoBehaviour
             authenticated: true,
             onSuccess: (decks) => {
                 this.decks = new(decks);
-                OnDecksGot?.Invoke();
+                OnDecksUpdated?.Invoke();
             },
             onError: (err) => {
                 Debug.LogError("Failed to get deck data: " + err);
             }
+        );
+    }
+
+    [Serializable] public class CreateDeckRequestBody{ public string name; }
+    public IEnumerator CreateDeck(string name){
+        yield return Request.Send<object>(
+            "deck/new",
+            "POST",
+            new CreateDeckRequestBody(){name = name},
+            authenticated: true,
+            onSuccess: (res) => {
+                decks.Add(new Deck(name));
+                OnDecksUpdated?.Invoke();
+                StartCoroutine(GetDecks());
+            },
+            onError: (err) => Debug.LogError("Failed to create deck: " + err)
         );
     }
 }
