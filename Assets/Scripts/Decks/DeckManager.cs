@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using  UnityEngine;
 
 public class DeckManager : MonoBehaviour
@@ -59,6 +60,22 @@ public class DeckManager : MonoBehaviour
                 StartCoroutine(GetDecks());
             },
             onError: (err) => Debug.LogError("Failed to create deck: " + err)
+        );
+    }
+
+    [Serializable] public class DeleteDeckRequestBody{ public int id; }
+    public IEnumerator DeleteDeck(int id){
+        yield return Request.Send<object>(
+            "deck/delete",
+            "POST",
+            new DeleteDeckRequestBody(){id = id},
+            authenticated: true,
+            onSuccess: (res) => {
+                decks.Remove(decks.Where(x => x.id == id).Single());
+                OnDecksUpdated?.Invoke();
+                StartCoroutine(GetDecks());
+            },
+            onError: (err) => Debug.LogError("Failed to delete deck: " + err)
         );
     }
 }

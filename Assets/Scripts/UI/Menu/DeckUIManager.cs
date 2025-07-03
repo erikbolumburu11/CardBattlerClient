@@ -72,4 +72,11 @@ public class DeckUIManager : MonoBehaviour
             (deckName) => StartCoroutine(DeckManager.instance.CreateDeck(deckName))
         );
     }
+
+    public void DeleteDeckButton(){
+        ConfirmPopup.SpawnPopup(
+            $"Delete {selectedDeck.name}?",
+            () => StartCoroutine(DeckManager.instance.DeleteDeck(selectedDeck.id))
+        );
+    }
 }

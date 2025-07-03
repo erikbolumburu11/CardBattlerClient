@@ -7,7 +7,7 @@ public class ConfirmPopup : Popup
     public Button confirmButton;
     public Button rejectButton;
 
-    public static ConfirmPopup SpawnPopup(string promptText, Action onConfirm, Action onReject)
+    public static ConfirmPopup SpawnPopup(string promptText, Action onConfirm, Action onReject = null)
     {
         GameObject prefab = Resources.Load<GameObject>("Prefabs/Popups/ConfirmPopup");
         if (prefab == null)
@@ -24,7 +24,7 @@ public class ConfirmPopup : Popup
         return popup;
     }
 
-    private void Setup(string promptText, Action onConfirm, Action onReject)
+    private void Setup(string promptText, Action onConfirm, Action onReject = null)
     {
         promptTextObject.text = promptText;
 
