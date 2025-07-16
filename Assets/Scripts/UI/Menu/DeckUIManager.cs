@@ -47,14 +47,8 @@ public class DeckUIManager : MonoBehaviour
         ClearDeckCards();
         foreach (DeckCard deckCard in selectedDeck.cards)
         {
-            for (int i = 0; i < deckCard.quantity; i++)
-            {
-                GameObject cardUI = Instantiate(cardPrefab, equippedCardGrid);
-                StartCoroutine(deckCard.card.GetSprite((sprite) => {
-                    cardUI.GetComponent<Image>().sprite = sprite;
-                }));
-                instantiatedDeckCards.Add(cardUI);
-            }
+            GameObject cardUI = EquippedCard.InstantiateCard(deckCard, equippedCardGrid, selectedDeck);
+            instantiatedDeckCards.Add(cardUI);
         }
     }
 
