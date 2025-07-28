@@ -9,6 +9,7 @@ public class DeckManager : MonoBehaviour
     public static DeckManager instance;
 
     public List<Deck> decks;
+    public List<Card> selectableCards;
 
     public static event Action OnDecksUpdated;
 
@@ -28,6 +29,7 @@ public class DeckManager : MonoBehaviour
     void OnDisable() => AuthenticationManager.OnPlayerLoggedIn -= OnLogin;
 
     void OnLogin(){
+        StartCoroutine(GetCards());
         StartCoroutine(GetDecks());
     }
 
@@ -44,6 +46,20 @@ public class DeckManager : MonoBehaviour
             onError: (err) => {
                 Debug.LogError("Failed to get deck data: " + err);
             }
+        );
+    }
+
+    public IEnumerator GetCards(){
+        yield return Request.Send<Card[]>(
+            "card/all",
+            "GET",
+            null,
+            authenticated: true,
+            onSuccess: (cards) => {
+                selectableCards = cards.ToList();
+                OnDecksUpdated?.Invoke();
+            },
+            onError: (err) => Debug.LogError("Failed to get cards: " + err)
         );
     }
 

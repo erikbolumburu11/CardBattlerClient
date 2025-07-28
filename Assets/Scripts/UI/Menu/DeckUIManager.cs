@@ -9,6 +9,7 @@ public class DeckUIManager : MonoBehaviour
     [SerializeField] TMP_Dropdown deckDropdown;
 
     [SerializeField] Transform equippedCardGrid;
+    [SerializeField] Transform selectableCardGrid;
 
     [SerializeField] GameObject cardPrefab;
 
@@ -18,15 +19,18 @@ public class DeckUIManager : MonoBehaviour
     Deck selectedDeck;
 
     List<GameObject> instantiatedDeckCards;
+    List<GameObject> instantiatedSelectableCards;
 
     void Awake()
     {
         instantiatedDeckCards = new();
+        instantiatedSelectableCards = new();
     }
 
     public void UpdateUI(){
         UpdateDeckDropdown();
         selectedDeck = DeckManager.instance.decks[deckDropdown.value];
+        UpdateCardSelection();
         UpdateDeckCards();
     }
 
@@ -52,12 +56,29 @@ public class DeckUIManager : MonoBehaviour
         }
     }
 
+    void UpdateCardSelection(){
+        ClearSelectableCards();
+        foreach (Card card in DeckManager.instance.selectableCards)
+        {
+            GameObject cardUI = SelectableCard.InstantiateCard(card, selectableCardGrid, selectedDeck);
+            instantiatedSelectableCards.Add(cardUI);
+        }
+    }
+
     void ClearDeckCards(){
         for (int i = instantiatedDeckCards.Count - 1; i >= 0; i--)
         {
             Destroy(instantiatedDeckCards[i]);
         }
         instantiatedDeckCards.Clear();
+    }
+
+    void ClearSelectableCards(){
+        for (int i = instantiatedSelectableCards.Count - 1; i >= 0; i--)
+        {
+            Destroy(instantiatedSelectableCards[i]);
+        }
+        instantiatedSelectableCards.Clear();
     }
 
     public void CreateDeckButton(){
